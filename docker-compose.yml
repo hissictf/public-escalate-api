@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  escalate-api:
+    image: hissictf/escalate-api:latest
+    container_name: escalate-api
+    ports:
+      - "8080:80"
+    environment:
+      ESCALATE_BROKER_URL: mqtt://mqtt-broker:1883
+      ESCALATE_AUTH_ENABLED: "false"
+      ESCALATE_DEBUG_MODE: "true"
+    depends_on:
+      - mqtt-broker
+
+  mqtt-broker:
+    image: eclipse-mosquitto:2
+    container_name: mqtt-broker
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  # legacy-debug:
+  #   image: hissictf/debug-toolkit:dev
+  #   environment:
+  #     DEBUG_FLAG: "FLAG{private_stuff_in_public_repo}"
+  #   command: ["sleep", "infinity"]
+  #   # Temporarily disabled; use only in staging
+
+networks:
+  default:
+    name: escalate-net
